@@ -1,12 +1,14 @@
 use crate::*;
 
+const URL_PREFIX: &str = "bafybeie4mi52rytczgfjjoiqgysm72xce3aqikwvlsfu3c2edgmsuhpoxu";
+
 #[near_bindgen]
 impl Contract {
     #[payable]
     pub fn nft_mint(
         &mut self,
         token_id: TokenId,
-        metadata: TokenMetadata,
+        // _metadata: TokenMetadata,
         receiver_id: AccountId,
         //we add an optional parameter for perpetual royalties
         perpetual_royalties: Option<HashMap<AccountId, u32>>,
@@ -48,6 +50,21 @@ impl Contract {
             self.tokens_by_id.insert(&token_id, &token).is_none(),
             "Token already exists"
         );
+
+        let metadata = TokenMetadata {
+            title: Some(format!("Token #{token_id}")),
+            description: None,
+            media: Some(format!("{URL_PREFIX}/{token_id}.png")),
+            media_hash: None,
+            copies: Some(1),
+            issued_at: None,
+            expires_at: None,
+            starts_at: None,
+            updated_at: None,
+            extra: None,
+            reference: Some(format!("{URL_PREFIX}/{token_id}.json")),
+            reference_hash: None,
+        };
 
         //insert the token ID and metadata
         self.token_metadata_by_id.insert(&token_id, &metadata);
